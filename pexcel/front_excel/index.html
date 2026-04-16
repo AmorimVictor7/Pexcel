@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Inserção de Ações</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="image/excel.png" type="image/png">
+
+</head>
+
+<body>
+
+  <div class="container">
+
+    
+    <div class="toggle" id="toggleTheme"></div>
+
+   
+    <div class="header">
+
+      <div class="icon">📊</div>
+
+      <div>
+        <h2>Inserção de Ações</h2>
+        <p>Preencha os campos abaixo para registrar uma nova ação de marketing.</p>
+      </div>
+
+    </div>
+
+    <form id="form">
+
+      <div class="grid">
+
+        
+        <div class="campo">
+          <label>Tipo de ação <span style="color: #1d4ed8;">*</span></label>
+          <select id="tipo_acao" required>
+            <option value="">Selecione...</option>
+          </select>
+        </div>
+
+        
+        <div class="campo">
+          <label>Marca <span style="color: #1d4ed8;">*</span></label>
+          <select id="marca" required>
+            <option value="">Selecione...</option>
+          </select>
+        </div>
+
+       
+        <div class="campo">
+          <label>Curso <span style="color: #1d4ed8;">*</span></label>
+          <select id="curso" required>
+            <option value="">Selecione...</option>
+          </select>
+        </div>
+
+       
+        <div class="campo">
+          <label>Campanha <span style="color: #1d4ed8;">*</span></label>
+          <select id="campanha" required>
+            <option value="">Selecione...</option>
+          </select>
+        </div>
+
+        
+        <div class="campo">
+          <label>Data da Ação <span style="color: #1d4ed8;">*</span></label>
+          <input type="date" id="data_acao" required>
+        </div>
+
+         <div class="campo">
+          <label>Ativo <span style="color: #1d4ed8;">*</span></label>
+          <select id="ativo" required>
+            <option value="">Selecione...</option>
+          </select>
+        </div>
+
+      </div>
+
+
+      <div class="campo full">
+        <label>Link do Formulário na Hubspot</label>
+        <input type="url" id="link" placeholder="https://...">
+        <small>Opcional — insira uma URL válida com https://</small>
+      </div>
+
+      <button type="submit">
+        Salvar Ação
+      </button>
+
+      <div class="envios">
+        <a href="https://docs.google.com/spreadsheets/d/1MQg4XZDuYeNcoFYkPMIvOnyxrQFymBpkF7B5HG9D5H4/edit?gid=0#gid=0"
+          target="_blank">
+          Resultados dos envios
+        </a>
+      </div>
+
+    </form>
+
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>
