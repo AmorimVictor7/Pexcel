@@ -1,11 +1,4 @@
-// ================================
-// CONFIG
-// ================================
-
-const siteUrl =
-"https://pecege.sharepoint.com/:l:/r/sites/grupoweb/Lists/ListaAcoes?e=6Py78q";
-
-const listaNome = "ListaAcoes";
+const url = "https://script.google.com/macros/s/AKfycby72zLCC1lJVQrWnkRinx8obdyIhf79ZKqcl9qPvZ9KvDWMW8Cyt0xKuxUlia5WGxs/exec";
 
 const form = document.getElementById('form');
 const botao = form.querySelector("button");
@@ -13,209 +6,103 @@ const botao = form.querySelector("button");
 let enviando = false;
 
 
-// ================================
-// CARREGAR SELECTS
-// (se vierem de lista SharePoint)
-// ================================
+  // CARREGAR SELECTS
 
 window.onload = () => {
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      console.log("Dados recebidos:", data);
 
-  carregarSelects();
-
+      preencherSelect("tipo_acao", data.tipo_acao);
+      preencherSelect("curso", data.curso);
+      preencherSelect("campanha", data.campanha);
+      preencherSelect("marca", data.marca);
+      preencherSelect("ativo", data.ativo);
+    })
+    .catch(error => {
+      console.error("Erro ao carregar selects:", error);
+    });
 };
 
-async function carregarSelects() {
 
-  try {
+   //FUNÇÃO PREENCHER SELECT
 
-    const url =
-      siteUrl +
-      "/_api/web/lists/getbytitle('BaseSelects')/items";
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Accept": "application/json;odata=nometadata"
-      }
-    });
-
-    const data = await response.json();
-
-    preencherSelect("tipo_acao", data.value, "TipoAcao");
-    preencherSelect("curso", data.value, "Curso");
-    preencherSelect("campanha", data.value, "Campanha");
-    preencherSelect("marca", data.value, "Marca");
-    preencherSelect("ativo", data.value, "AcaoAtiva");
-
-  } catch (error) {
-
-    console.error("Erro ao carregar selects:", error);
-
-  }
-
-}
-
-
-// ================================
-// PREENCHER SELECT
-// ================================
-
-function preencherSelect(id, dados, campo) {
-
+function preencherSelect(id, lista) {
   const select = document.getElementById(id);
 
-  const valoresUnicos =
-    [...new Set(dados.map(item => item[campo]))];
+  if (!lista) return;
 
-  select.innerHTML =
-    '<option value="">Selecione...</option>';
-
-  valoresUnicos.forEach(valor => {
-
-    if (valor) {
-
-      let option =
-        document.createElement("option");
-
-      option.value = valor;
-      option.textContent = valor;
-
-      select.appendChild(option);
-
-    }
-
+  lista.forEach(item => {
+    const option = document.createElement("option");
+    option.value = item;
+    option.textContent = item;
+    select.appendChild(option);
   });
-
 }
 
 
-// ================================
-// ENVIAR PARA SHAREPOINT
-// ================================
+   //ENVIAR FORMULÁRIO
 
-form.addEventListener('submit', async function (e) {
-
+form.addEventListener('submit', function (e) {
   e.preventDefault();
 
-  if (enviando) return;
-
-  const data = {
-
-    tipo_acao:
-      document.getElementById('tipo_acao').value,
-
-    curso:
-      document.getElementById('curso').value,
-
-    campanha:
-      document.getElementById('campanha').value,
-
-    marca:
-      document.getElementById('marca').value,
-
-    data_acao:
-      document.getElementById('data_acao').value,
-
-    ativo:
-      document.getElementById('ativo').value,
-
-    link:
-      document.getElementById('link').value
-
-  };
-
+  if (enviando) return; // bloqueia clique duplo
   enviando = true;
 
+  // trava botão
   botao.disabled = true;
   botao.innerText = "Enviando...";
 
-  try {
+  const data = {
+    tipo_acao: document.getElementById('tipo_acao').value,
+    curso: document.getElementById('curso').value,
+    campanha: document.getElementById('campanha').value,
+    marca: document.getElementById('marca').value,
+    data_acao: document.getElementById('data_acao').value,
+    ativo: document.getElementById('ativo').value,
+    link: document.getElementById('link').value
+  };
 
-    const url =
-      siteUrl +
-      "/_api/web/lists/getbytitle('" +
-      listaNome +
-      "')/items";
-
-    const response = await fetch(url, {
-
-      method: "POST",
-
-      headers: {
-        "Accept":
-          "application/json;odata=nometadata",
-
-        "Content-Type":
-          "application/json;odata=nometadata"
-      },
-
-      body: JSON.stringify({
-
-        Title: data.tipo_acao,
-        Curso: data.curso,
-        Campanha: data.campanha,
-        Marca: data.marca,
-        DataAcao: data.data_acao,
-        Ativo: data.ativo,
-        Link: data.link
-
-      })
-
-    });
-
-    if (response.ok) {
+  fetch(url, {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+    .then(response => response.text())
+    .then(result => {
+      console.log(result);
 
       alert("Enviado com sucesso! ✅");
-
       form.reset();
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Erro ao enviar ❌");
+    })
+    .finally(() => {
+      enviando = false;
 
-    } else {
-
-      alert("Erro ao salvar ❌");
-
-    }
-
-  } catch (error) {
-
-    console.error(error);
-
-    alert("Erro ao enviar ❌");
-
-  }
-
-  enviando = false;
-
-  botao.disabled = false;
-  botao.innerText = "Salvar Ação";
-
+      // libera botão
+      botao.disabled = false;
+      botao.innerText = "Salvar Ação";
+    });
 });
 
 
-// ================================
-// DARK MODE
-// ================================
+   //DARK MODE
 
-const toggle =
-document.getElementById("toggleTheme");
+const toggle = document.getElementById("toggleTheme");
 
 if (localStorage.getItem("theme") === "dark") {
-
   document.body.classList.add("dark-mode");
-
 }
 
 toggle.addEventListener("click", () => {
-
   document.body.classList.toggle("dark-mode");
 
   if (document.body.classList.contains("dark-mode")) {
-
     localStorage.setItem("theme", "dark");
-
   } else {
-
     localStorage.setItem("theme", "light");
-
   }
-
 });
