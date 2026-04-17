@@ -1,4 +1,4 @@
-const url = "https://script.google.com/macros/s/AKfycby72zLCC1lJVQrWnkRinx8obdyIhf79ZKqcl9qPvZ9KvDWMW8Cyt0xKuxUlia5WGxs/exec";
+const url = "https://pecege.sharepoint.com/:l:/r/sites/grupoweb/Lists/ListaAcoes?e=5CQWdP";
 
 const form = document.getElementById('form');
 const botao = form.querySelector("button");
