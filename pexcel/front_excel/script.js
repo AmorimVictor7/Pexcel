@@ -6,9 +6,14 @@ const botao = form.querySelector("button");
 let enviando = false;
 
 
-  // CARREGAR SELECTS
+// CARREGAR SELECTS
 
 window.onload = () => {
+
+  // BLOQUEAR DATA FUTURA NO INPUT
+  document.getElementById("data_acao").max =
+    new Date().toISOString().split("T")[0];
+
   fetch(url)
     .then(res => res.json())
     .then(data => {
@@ -26,7 +31,7 @@ window.onload = () => {
 };
 
 
-   //FUNÇÃO PREENCHER SELECT
+// FUNÇÃO PREENCHER SELECT
 
 function preencherSelect(id, lista) {
   const select = document.getElementById(id);
@@ -42,17 +47,19 @@ function preencherSelect(id, lista) {
 }
 
 
-   //ENVIAR FORMULÁRIO
+// ENVIAR FORMULÁRIO
 
 form.addEventListener('submit', function (e) {
   e.preventDefault();
 
-  if (enviando) return; // bloqueia clique duplo
+  if (enviando) return;
+
   enviando = true;
 
   // trava botão
   botao.disabled = true;
   botao.innerText = "Enviando...";
+
 
   const data = {
     tipo_acao: document.getElementById('tipo_acao').value,
@@ -63,6 +70,37 @@ form.addEventListener('submit', function (e) {
     ativo: document.getElementById('ativo').value,
     link: document.getElementById('link').value
   };
+
+
+  //VALIDAR DATA
+
+  if (!data.data_acao) {
+    alert("Selecione uma data válida ❌");
+
+    enviando = false;
+    botao.disabled = false;
+    botao.innerText = "Salvar Ação";
+
+    return;
+  }
+
+  const dataSelecionada = new Date(data.data_acao);
+  const hoje = new Date();
+
+  hoje.setHours(0, 0, 0, 0);
+
+  if (dataSelecionada > hoje) {
+    alert("Adicione uma data válida (não pode ser depois de hoje) ❌");
+
+    enviando = false;
+    botao.disabled = false;
+    botao.innerText = "Salvar Ação";
+
+    return;
+  }
+
+
+  // ENVIO
 
   fetch(url, {
     method: "POST",
@@ -80,16 +118,19 @@ form.addEventListener('submit', function (e) {
       alert("Erro ao enviar ❌");
     })
     .finally(() => {
+
       enviando = false;
 
       // libera botão
       botao.disabled = false;
       botao.innerText = "Salvar Ação";
+
     });
+
 });
 
 
-   //DARK MODE
+// DARK MODE
 
 const toggle = document.getElementById("toggleTheme");
 
@@ -98,6 +139,7 @@ if (localStorage.getItem("theme") === "dark") {
 }
 
 toggle.addEventListener("click", () => {
+
   document.body.classList.toggle("dark-mode");
 
   if (document.body.classList.contains("dark-mode")) {
@@ -105,4 +147,5 @@ toggle.addEventListener("click", () => {
   } else {
     localStorage.setItem("theme", "light");
   }
+
 });
