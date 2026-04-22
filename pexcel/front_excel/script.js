@@ -56,7 +56,7 @@ form.addEventListener('submit', function (e) {
 
   enviando = true;
 
-  // trava botão
+  // TRVAR BOTAO ENVIO
   botao.disabled = true;
   botao.innerText = "Enviando...";
 
